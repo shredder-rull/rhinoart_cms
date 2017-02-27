@@ -5,11 +5,11 @@
   .control-group
     = f.label :name, class: 'control-label'
     .controls
-      = f.text_field :name, class: 'span11'
+      = f.text_field :name, readonly: disabled_page?(f.object), class: 'span11'
   .control-group
     = f.label :slug, class: 'control-label'
     .controls
-      = f.text_field :slug, class: 'span11'
+      = f.text_field :slug, readonly: disabled_page?(f.object), class: 'span11'
       = link_to '<span class="icon-plus-sign"></span>'.html_safe, '#mdFieldAdd', data: {toggle: "modal"}
   / Page fields
   = render "page_fields", f: f
@@ -28,7 +28,7 @@
           $('#page_publish_date').datepicker({
               format: 'mm/dd/yyyy'
           });
-    - if f.object.ptype == 'article' || f.object.ptype == 'blog'
+    - if f.object.ptype.downcase == Rhinoart::Page::TUPES[:article].to_s.downcase || f.object.ptype.downcase == Rhinoart::Page::TUPES[:blog].to_s.downcase
       .span3
         = f.label :user
         = f.collection_select :user_id, Rhinoart::User.where('frontend_role is not null'), :id, :name_email, {include_blank: true}, {class: 'span12'}

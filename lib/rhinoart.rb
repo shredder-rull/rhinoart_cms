@@ -1,5 +1,6 @@
 require 'rhinoart/engine'
 require 'rhinoart/asset_registration'
+require 'rhinoart/work_links'
 
 module Rhinoart
   extend ActiveSupport::Autoload
@@ -33,6 +34,20 @@ module Rhinoart
     controllers: Rhinoart.devise_controllers
   })
 
+  setting('devise_scopes', [
+    :database_authenticatable, 
+    :recoverable, 
+    :registerable, 
+    :trackable, 
+    :validatable, 
+    :omniauthable, 
+    :omniauth_providers => [:google_oauth2]
+  ])
+
+  setting :copyrights, {
+    name: 'RhinoArt',
+    url: 'http://www.rhinoart.ru',    
+  }
 end
 
 require 'rhinoart/railtie' if defined?(Rails)

@@ -52,19 +52,31 @@ module Rhinoart
 	    		content_tabs(@page)
 	    	else
 		    	case @page.ptype
-		    	when 'article'
-		    		content_fields(@page)
-		    		content_tabs(@page,  %w[main_content preview])
-		    	when 'blog'
+		    	when Page::TUPES[:article].to_s.downcase
+		    		additional = [
+		    			{ name: "image", ftype: "file", position: 5 }
+		    		]
+		    		content_fields(@page, 'default', additional)
+		    		content_tabs(@page,  %w[preview main_content])
+		    	when Page::TUPES[:blog].to_s.downcase
 		    		fields =  [
-							{ :name => "title", :ftype => "title", :position => 1 },
-							{ :name => "h1", :ftype => "title", :position => 2 },
-							{ :name => "description", :ftype => "meta", :position => 3 },
-							{ :name => "keywords", :ftype => "meta", :position => 4 },
-							{ :name => "comment", :ftype => "boolean", :position => 5, :value => 'no' },
+						{ name: "title", ftype: "title", position: 1 },
+						{ name: "h1", ftype: "title", position: 2 },
+						{ name: "description", ftype: "meta", position: 3 },
+						{ name: "keywords", ftype: "meta", position: 4 },
+						{ name: "comment", ftype: "boolean", position: 5, value: 1 },
 					]
 		    		content_fields(@page, fields)
 		    		content_tabs(@page,  %w[short full])
+		    	when Page::TUPES[:testimonial].to_s.downcase
+		    		fields =  [
+						{ name: "title", ftype: "title", position: 1 },
+						{ name: "h1", ftype: "title", position: 2 },
+						{ name: "author", ftype: "textarea", position: 3 },
+						{ name: "image", ftype: "file", position: 4 },
+					]
+		    		content_fields(@page, fields)
+		    		content_tabs(@page,  %w[preview main_content])
 		    	else
 		    		content_fields(@page)
 		    		content_tabs(@page)
@@ -192,7 +204,7 @@ module Rhinoart
 				end
 			end
 
-			def content_fields(page, fields = 'default')
+			def content_fields(page, fields = 'default', additional = nil)
 				if fields == 'default'
 					fields =  [
 							{ :name => "title", :ftype => "title", :position => 1 },
@@ -201,6 +213,8 @@ module Rhinoart
 							{ :name => "keywords", :ftype => "meta", :position => 4 }
 					]
 				end
+
+				fields.push(additional[0]) if additional
 
 				fields.each do |field|
 					field.assert_valid_keys(:name, :ftype, :position, :value) # валидация
