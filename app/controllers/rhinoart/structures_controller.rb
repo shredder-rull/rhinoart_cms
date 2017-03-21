@@ -2,7 +2,7 @@ require_dependency "rhinoart/application_controller"
 
 module Rhinoart
 	class StructuresController < ApplicationController
-		before_action { authorize! :manage, :all }
+		before_action { authorize!(:manage, :content) }
 
 		def index
 			store_location

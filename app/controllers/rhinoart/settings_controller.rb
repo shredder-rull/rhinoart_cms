@@ -33,9 +33,7 @@ module Rhinoart
 		end
 
 		def update
-			if @setting.update(admin_setting_params)	
-				setting_by_name(@setting.name, true)
-				
+			if @setting.update(admin_setting_params)
 				flash[:info] = t('_SUCCESSFULLY_UPDATED', name: @setting.name)
 				if params[:continue].present? 
 					render action: "edit"
@@ -55,19 +53,19 @@ module Rhinoart
 			redirect_back_or settings_path		
 		end
 
-	    private
-	        # Use callbacks to share common setup or constraints between actions.
-	        def set_admin_setting
-				begin
-					@setting = Setting.find(params[:id])
-				rescue
-					render template: 'rhinoart/shared/error404', status: :not_found
-				end 
-	        end
+		private
+				# Use callbacks to share common setup or constraints between actions.
+		def set_admin_setting
+			begin
+				@setting = Setting.find(params[:id])
+			rescue
+				render template: 'rhinoart/shared/error404', status: :not_found
+			end
+		end
 
-	        # Never trust parameters from the scary internet, only allow the white list through.
-	        def admin_setting_params
-	            params.require(:setting).permit! #(:name, :value, :descr)
-	        end 	
+		# Never trust parameters from the scary internet, only allow the white list through.
+		def admin_setting_params
+				params.require(:setting).permit! #(:name, :value, :descr)
+		end
 	end
 end
