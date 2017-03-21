@@ -1,0 +1,20 @@
+#param-fields-list.collapse
+  = f.fields_for :fields do |pf|
+    = render 'rhinoart/page_fields/field_row', pf: pf
+  #ajax_field_add
+
+- if f.object.fields.any?
+  .form-group.text-right
+    a.collapsed.page-fields-collapse-link data-toggle="collapse" href='#param-fields-list'
+      span.to-open
+        span>= t('_MORE')
+        = icon('arrow-down')
+      span.to-close
+        span>= t('_LESS')
+        = icon('arrow-up')
+
+- content_for :javascript do
+  javascript:
+    $('input[type=file]').on('change', function() {		
+    	$(this).parent().parent().find('.file_str').val( $(this).val() );
+    });

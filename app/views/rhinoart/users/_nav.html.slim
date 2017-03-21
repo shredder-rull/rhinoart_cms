@@ -1,0 +1,25 @@
+- query = params[:q] || {}
+nav.navbar.navbar-toggleable-sm.navbar-inverse.bg-inverse
+  .form-inline
+    a.btn.btn-primary href=new_user_path
+      = icon('plus')
+      span< Create new
+  ul.navbar-nav.mr-auto
+    - if config.user_approving
+      li.nav-item class=(params[:not_approved] ? 'active' : '')
+        = link_to users_path(q: {not_approved: true}), class: 'nav-link' do
+          | Not approved
+          span.badge.badge-info< = Rhinoart.user_class.not_approved.count
+    li.nav-item class=('active' if query['admins'])
+      = link_to users_path(q: {admins: true}), class: 'nav-link' do
+        | Admin users
+        span.badge.badge-pill.badge-default< = Rhinoart.user_class.admins.count
+
+    li.nav-item class=('active' if query.values_at(%w[admins super_users user_managers content_managers]).map(&:presence).compact.blank? )
+      = link_to users_path, class: 'nav-link' do
+        | All
+        span.badge.badge-pill.badge-default<= Rhinoart.user_class.count
+
+  = search_form_for @search, url: users_path, html: {class: 'form-inline'} do |f|
+    = f.search_field :email_or_first_name_or_last_name_cont, placeholder: 'Search by email or name', class: 'form-control mr-sm-2'
+    = f.submit 'Search', class: 'btn btn-default', data: {disable_with: 'Searching...'}, class: 'btn btn-default my-sm-0'

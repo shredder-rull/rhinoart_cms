@@ -1,28 +1,28 @@
 - provide(:title, t(:_PAGES))
 - content_for :sidebar_l2 do
-  #sidebar-left2.span3{style: "min-height: 500px;"}
+  #sidebar-left2.span3
     .nav-collapse.sidebar-nav
-      / <ul class="nav nav-tabs nav-stacked">
-      - page_tree.each do |p|
-        = render 'rows', p: p
-      / </ul>
+      = render 'rows', pages: page_tree
+
 .row-fluid.sortable.ui-sortable
   .box.span12
     .box-header
       %h2
-        %i.halflings-icon.hand-top
-        = succeed "Quick" do
-          %span.break
+        = icon('hand-pointer-o')
+        %span.break
+        %span Quick
     .box-content
-      - Rhinoart::Menu::ContentMenu.items.each do |item| 
-        - if can?(:manage, :all)
-          %a.quick-button{href: "#{menu_item_link(item)}", class: "span#{12/Rhinoart::Menu::ContentMenu.items.count}" }
-            %i{class: "#{item.icon}"}
-            %p= t item.label
-            %span.notification= item.notification.try(:call)
-        - else 
-          %span.quick-button{ class: "span#{12/Rhinoart::Menu::ContentMenu.items.count}", style: 'cursor: default' }
-            %i{class: "#{item.icon}"}
-            %p= t item.label
-            %span.notification= item.notification.try(:call)
+      .row
+        - Rhinoart::Menu::ContentMenu.items.each do |item|
+          %div{class: "col col-md-#{12/Rhinoart::Menu::ContentMenu.items.count}"}
+            - if can?(:manage, :all)
+              %a.quick-button{href: "#{menu_item_link(item)}"}
+                %i{class: "fa #{item.icon}"}
+                %p= t item.label
+                %span.notification= item.notification.try(:call)
+            - else
+              %span.quick-button{ style: 'cursor: default' }
+                %i{class: "fa #{item.icon}"}
+                %p= t item.label
+                %span.notification= item.notification.try(:call)
       .clearfix

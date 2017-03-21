@@ -1,0 +1,4 @@
+<% @page.leaves.each do |p| %>
+    $('#row-<%= p.id %>').remove();
+<% end %>
+$('#row-<%= @page.id %>').find('.children-control').html('<%=j( link_to icon('plus'), children_page_path(@page, index: @index), remote: true )%>');

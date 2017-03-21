@@ -1,0 +1,34 @@
+- provide(:title, t(:_NEWS_ARTICLES))
+- content_for :sidebar_l2 do
+  #sidebar-left2.span3
+    .nav-collapse.sidebar-nav
+      = render 'rows', pages: page_tree
+
+.box-header data-original-title=""
+  h2
+    = icon('tasks')
+    span.break
+    = @page.name
+.box-content
+  .form-group
+    span>= link_to new_children_page_path(@page), class: 'btn btn-primary' do
+      = icon('plus')
+      span<= t(:_NEW)
+
+    span>= link_to edit_page_path(@page), class: 'btn btn-success' do
+      = icon('edit')
+      span<= t(:_EDIT)
+
+
+  table.table.table-striped.tree
+    thead
+      tr
+        th width="1%"
+        th width="60%"= t :_PAGES
+        th width="10%"= t :_STATUS
+        th= t :_ACTIONS
+    tbody
+      - @pages.each do |p|
+        = render 'children_row', p: p, index: p.depth
+
+  .pagination= paginate @pages

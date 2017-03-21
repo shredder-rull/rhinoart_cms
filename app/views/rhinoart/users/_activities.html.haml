@@ -1,0 +1,24 @@
+%br
+%legend User Works
+
+- if @works.any?
+  %table.table.table-striped
+    %thead
+      %tr
+        %th Changed object
+        %th Action
+        %th Date Change
+
+    - @works.each do |work|
+      - begin
+        %tr
+          %td= render 'rhinoart/shared/work_links', work: work
+          %td= work.event
+          %td= l work.created_at, format: :short
+      - rescue Exception => e
+        %tr
+          %td= "#{work.item_type} (#{work.item_id})"
+          %td= work.event
+          %td= l work.created_at, format: :short
+
+  = will_paginate @works

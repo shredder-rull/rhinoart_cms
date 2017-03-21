@@ -1,4 +1,8 @@
 - provide(:title, t(:_NEW_SETTING))
-= form_for @setting, :url => settings_path do |c|
-  %legend= t :_NEW_SETTING
-  = render 'fields', f: c
+.box-header
+  %h2
+    = icon('cogs')
+    = t(:_NEW_SETTING)
+.box-content
+  .row
+    .col-md-8.offset-sm-1.col-lg-6= render 'form'

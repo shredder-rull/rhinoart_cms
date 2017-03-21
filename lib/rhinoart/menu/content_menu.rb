@@ -9,28 +9,28 @@ module Rhinoart
       end
 
       add_item({
-          icon: 'fa-icon-tasks',
+          icon: 'fa-tasks',
           link: proc{ rhinoart.new_page_path },
-          label: :_NEWS_ARTICLES,
+          label: :_NEW_PAGE,
           notification: ->{ Rhinoart::Page.count }
         })
 
       add_item({
-          icon: 'fa-icon-book',
-          link: proc{ rhinoart.new_page_path },
-          label: :_BLOGS,
-          notification: ->{ Rhinoart::Page.where("ptype='blog'").count }
-        })
+          icon: 'fa-book',
+          link: proc{ rhinoart.new_page_path(type: Rhinoart::Page::TYPE::BLOG) },
+          label: :_NEW_BLOG_POST,
+          notification: ->{ Rhinoart::Page.where(type: Rhinoart::Page::TYPE::BLOG).count }
+      })
 
       add_item({
-          icon: 'fa-icon-group',
+          icon: 'fa-group',
           link: proc{ rhinoart.users_path },
           label: :_USERS,
-          notification: ->{ Rhinoart::User.count }
+          notification: ->{ Rhinoart.user_class.count }
         })
 
       add_item({
-          icon: 'fa-icon-cogs',
+          icon: 'fa-cogs',
           link: proc{ rhinoart.settings_path },
           label: :_SETTINGS,
           notification: ->{ Rhinoart::Setting.count }

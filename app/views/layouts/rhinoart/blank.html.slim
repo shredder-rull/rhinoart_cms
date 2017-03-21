@@ -1,0 +1,12 @@
+doctype html
+html
+  head
+    meta content="text/html; charset=UTF-8" http-equiv="Content-Type"/
+    meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" /
+    title= full_title
+    = stylesheet_link_tag 'rhinoart_admin', media: 'all', 'data-turbolinks-track': 'reload'
+    = csrf_meta_tags
+  body.body-blank
+    = yield
+    = javascript_include_tag 'rhinoart_admin'
+    = raw yield(:javascript)

@@ -1,4 +1,5 @@
-- flash.each do |key, value| 
-	.alert{ class: "alert-#{key}" }
-		%button{ type: "button", class: "close", data: {dismiss: "alert"} } &times;
-		= value
+- flash.each do |key, value|
+  - key = 'info' if %[alert notice].include?(key)
+  .alert{ class: "alert-#{key}" }
+    %button{ type: "button", class: "close", data: {dismiss: "alert"} } &times;
+    = value

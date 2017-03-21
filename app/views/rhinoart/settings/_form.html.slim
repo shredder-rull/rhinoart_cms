@@ -1,0 +1,21 @@
+= form_for @setting do |f|
+  = render 'rhinoart/shared/error_messages', object: f.object
+  .form-group.row
+    = f.label :name, class: 'col-form-label col-sm-3'
+    .col-sm-9
+      = f.text_field :name, required: true, class: 'form-control'
+
+  .form-group.row
+    = f.label :value, class: 'col-form-label col-sm-3'
+    .col-sm-9
+      = f.text_area :value, class: 'form-control', rows: 6
+
+  .form-group.row
+    = f.label :descr, class: 'col-form-label col-sm-3'
+    .col-sm-9
+      = f.text_area :descr, class: 'form-control', rows: 2
+
+  .form-group.row
+    .col-sm-3.offset-md-3= f.button t('_BTN_SAVE'), class: 'btn btn-primary btn-block'
+    .col-sm-3= f.button t('_BTN_SAVE_AND_CONTINUE'), class: 'btn btn-success  btn-block', name: 'continue', value: 'continue'
+    .col-sm-3= link_to t('_BTN_CANCEL'), settings_path, class: 'btn btn-secondary btn-block'

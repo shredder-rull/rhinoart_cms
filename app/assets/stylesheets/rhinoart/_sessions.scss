@@ -1,0 +1,10 @@
+.form-login {
+  &-wrapper {
+    padding: 25px;
+    width: 100%;
+    max-width: 500px;
+    background-color: $white;
+    border: 1px solid $brand-success;
+    border-radius: 10px;
+  }
+}

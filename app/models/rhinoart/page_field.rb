@@ -6,36 +6,47 @@
 #  page_id  :integer          not null
 #  name     :string(120)      not null
 #  value    :text
-#  ftype    :string(60)
+#  type    :string(60)
 #  position :integer          not null
 #
 
 module Rhinoart
-	class PageField < Rhinoart::Base
-		self.inheritance_column = "non_sti"
-		after_save :update_page_date
-		after_destroy :update_page_date
+	class PageField < Rhinoart::ApplicationRecord
 
-		belongs_to :page, :inverse_of => :page_field	
+		module TYPE
+			STRING 		= :string
+			TEXT 			= :text
+			FILE 			= :file
+			BOOLEAN		= :boolean
+			META			= :meta
+			INTEGER   = :integer
+		end
+
+		belongs_to :page, touch: true, required: false
 		accepts_nested_attributes_for :page
 
-		has_one :attachment, as: :attachable, class_name: "Rhinoart::Files", :autosave => true, :dependent => :destroy
-		accepts_nested_attributes_for :attachment, allow_destroy: true #, reject_if: :all_blank
+		has_one :attachment, as: :owner, class_name: "Rhinoart::File", autosave: true, dependent: :destroy
+		accepts_nested_attributes_for :attachment, allow_destroy: true, reject_if: :all_blank
 
-		default_scope { order 'position' }
-		acts_as_list scope: :page_id
+		scope :meta, ->{ where(type: :meta) }
 
-		FIELD_TYPES = { text: 'Text', textarea: 'Textarea', file: 'File', boolean: 'Bollean', title: 'Title', meta: 'Meta descr and key' }
+		TYPES = [TYPE::STRING, TYPE::TEXT, TYPE::FILE, TYPE::BOOLEAN, TYPE::META]
 
-		validates :name, :ftype, presence: true
+		validates :name, :type, presence: true
 		validates_uniqueness_of :name, :scope => :page_id
 
-		validates :ftype, inclusion: { in: FIELD_TYPES.keys.map(&:to_s) }
+		validates :type, inclusion: { in: TYPES.map(&:to_s) }
 	
 		has_paper_trail
-		
-		def select_list
-			FIELD_TYPES.map { |ft| [ft[1], ft[0]] }
+
+		def value
+			case type.to_sym
+				when TYPE::FILE then attachment.try(:file_url)
+				when TYPE::BOOLEAN then ['1','true'].include?(self[:value])
+				when TYPE::INTEGER then self[:value].to_i
+				else super
+			end
 		end
+
 	end
 end

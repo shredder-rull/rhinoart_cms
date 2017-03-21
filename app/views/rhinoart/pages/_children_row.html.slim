@@ -1,0 +1,25 @@
+tr.content-t id="row-#{p.id}"
+  td.children-control
+    - if p.children.exists?
+      = link_to icon('plus'), children_page_path(p, index: index), remote: true
+  td class="level level_#{p.depth - index}"
+    = link_to p.name, edit_page_path(p), class: 'title'
+    i: sup= p.id
+    = image_tag('rhinoart/spinner.gif', class: 'loading hidden')
+  td
+    = (p.active?) ? t(:_BTN_PUBLIC) : content_tag(:span, t(:_BTN_HIDDEN), class: 'label label-important')
+  td.nowrap
+    span>= link_to page_up_path(p), class: 'btn btn-info btn-sm' do
+      = icon('arrow-up')
+
+    span>= link_to page_down_path(p), class: 'btn btn-info btn-sm' do
+      = icon('arrow-down')
+
+    span>= link_to edit_page_path(p), class: 'btn btn-success btn-sm' do
+      = icon('edit')
+
+    span>= link_to showhide_page_path(p), class: 'btn btn-warning btn-sm' do
+      = p.active? ? icon('eye-slash') : icon('eye')
+
+    span>= link_to page_path(p), class: 'btn btn-danger btn-sm', :method => :delete, :data => { :confirm => t('_DELETE_CONFIRM') } do
+      = icon('trash')

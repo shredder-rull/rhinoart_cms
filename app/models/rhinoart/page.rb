@@ -1,150 +1,104 @@
-# encoding: utf-8
-# == Schema Information
-#
-# Table name: rhinoart_pages
-#
-#  id           :integer          not null, primary key
-#  parent_id    :integer
-#  name         :string(255)      not null
-#  slug         :string(255)      not null
-#  position     :integer          not null
-#  menu         :integer          default(1)
-#  active       :boolean          default(TRUE)
-#  ptype        :string(20)       default("page"), not null
-#  sm_p         :string(7)        default("weekly"), not null
-#  st_pr        :decimal(10, 2)   default(0.5), not null
-#  created_at   :datetime
-#  updated_at   :datetime
-#  publish_date :date             not null
-#  user_id      :integer
-#
-
 module Rhinoart
-  class Page < Rhinoart::Base
-    require "rhinoart/utils"
+  class Page < Rhinoart::ApplicationRecord
+
+    paginates_per 30
+
+    module TYPE
+      PAGE = :page
+      BLOG = :blog
+      ARTICLE = :article
+      TESTIMONIAL = :testimonial
+    end
+
+    TYPES = [TYPE::PAGE, TYPE::BLOG, TYPE::ARTICLE, TYPE::TESTIMONIAL]
+    VALID_SLUG_REGEX = /\A[-_.\/A-Za-z0-9А-Яа-я]+\z/i
+
+    default_scope { order(:lft) }
+    scope :active, ->{ where(active: true) }
+    scope :ready, ->{ active.where('published_at <= ?', Time.current) }
 
     before_validation :name_to_slug
-    after_initialize :set_publish_date
+    before_validation :set_published_at
 
-    # Associations
-    # has_many :page_content, :order => 'position', :autosave => true, :dependent => :destroy
-    has_many :page_content, -> { order 'position' }, :autosave => true, :dependent => :destroy
-    accepts_nested_attributes_for :page_content, :allow_destroy => true
+    has_many :contents, -> { order 'position' }, class_name: 'Rhinoart::PageContent', dependent: :destroy#, inverse_of: :page
+    accepts_nested_attributes_for :contents, allow_destroy: true
 
-    # has_many :page_field, :order => 'position', :autosave => true, :dependent => :destroy
-    has_many :page_field, -> { order 'position' }, :autosave => true, :dependent => :destroy
-    accepts_nested_attributes_for :page_field, :allow_destroy => true
+    has_many :fields, class_name: 'Rhinoart::PageField', dependent: :destroy
 
-    has_many :page_comment, -> { order 'id' }, :autosave => true, :dependent => :destroy
-    accepts_nested_attributes_for :page_comment, :allow_destroy => true
+    accepts_nested_attributes_for :fields, allow_destroy: true
 
-    belongs_to :user # , polymorphic: true
-    accepts_nested_attributes_for :user # , :allow_destroy => true
+    has_many :page_comments, -> { order 'id' }, autosave: true, dependent: :destroy, inverse_of: :page
+
+    accepts_nested_attributes_for :page_comments, allow_destroy: true
+
+    has_many :relations, as: :relation, inverse_of: :page
+
+    belongs_to :user, class_name: Rhinoart.config.user_class, required: false
+
+    scope :articles, ->{ where(type: TYPE::ARTICLE) }
+    scope :published, ->{ where('published_at > ?', Time.current)}
+
+    serialize :images, JSON
+
+    before_save do
+      self.images = contents.flat_map{|c| Nokogiri::HTML.parse(c.content).xpath('//img/@src').map(&:value)  }.uniq
+    end
 
     # Validations
-    validates :name, :slug, :menu, :publish_date, presence: true
-
+    validates :name, :published_at, presence: true
+    validates :slug, presence: true, if: ->{ name.present? }
     validates :name, length: { maximum: 255 }
-    validates :slug, length: { maximum: 255 }
+    validates :slug, length: { maximum: 255 }, allow_blank: true
+    validates :slug, uniqueness: { case_sensitive: false, scope: :parent_id }, allow_blank: true
+    validates :slug, format: { with: VALID_SLUG_REGEX }, allow_blank: true
 
-    # VALID_SLUG_REGEX = %r{^([-_/.A-Za-z0-9А-Яа-я]*|/)$}
-    VALID_SLUG_REGEX = /\A[-_.\/A-Za-z0-9А-Яа-я]+\z/i
-    validates :slug, uniqueness: { case_sensitive: false }, format: { with: VALID_SLUG_REGEX }
-    validates_uniqueness_of :slug, :scope => :parent_id
-
-    # default_scope { order 'position asc' }
-    acts_as_list :scope => [:parent_id] # , :publish_date
+    acts_as_nested_set dependent: :destroy, touch: true
 
     has_paper_trail
 
-    TUPES = {
-      page: 'Page',
-      article: 'Article',
-      blog: 'Blog',
-      testimonial: 'Testimonial'
-    }.freeze
-    def content_by_name(name='main_content')
-      if page_content.find_by(name: name).present?
-        page_content.find_by(name: name).content
-      else
-        ''
-      end
-    end
-    alias content content_by_name
-
-    def field_by_name(name)
-      field = page_field.find_by(name: name.downcase)
-      if field.present?
-        if field.ftype != PageField::FIELD_TYPES[:file].downcase
-          field.value
-        else
-          field.attachment.try(:file_url)
-        end
-      else
-        ''
-      end
-    end
-    alias field field_by_name
-
-    def field_obj(name)
-      page_field.find_by(name: name.downcase) if page_field.find_by(name: name.downcase).present?
+    def content(name='main_content')
+      contents.find_by(name: name).try(:content) || ''
     end
 
-    def children(active = true)
-      if active
-        Page.where(parent_id: id, active: true)
-      else
-        Page.where(parent_id: id)
+    def content=(content)
+      return if content.nil?
+      contents.find_or_initialize_by(name: 'main_content').content = content
+    end
+
+    def field(name)
+      fields.find_by(name: name.downcase).try(:value)
+    end
+
+    def self.index
+      self.find_by!(slug: 'index')
+    end
+
+    def self.blog
+      self.find_or_create_by!(name: 'Blog') do |blog|
+        next if blog.persisted?
+        blog.type = TYPE::BLOG
+        blog.contents.build(name: 'main_content', content: 'This content is not using')
       end
     end
 
     def title
-      if field_by_name('title').present?
-        field_by_name('title')
-      else
-        name
-      end
-    end
-
-    def parent
-      Page.find(parent_id) if parent_id.present?
-    end
-
-    def comment_count
-      PageComment.where('page_id = ? AND approved = true', id).count
-    end
-
-    def self.article_list(id = nil)
-      if id.present?
-        where("ptype != ? AND id != ?", Page::TUPES[:article].to_s.downcase, id).order('name')
-      else
-        where("ptype != ?", Page::TUPES[:article].to_s.downcase).order('name')
-      end
+      field(:title) || name
     end
 
     protected
 
-    def set_publish_date
-      self.publish_date = Time.now unless publish_date.present?
-      end
+    def should_generate_new_friendly_id?
+      false
+    end
+
+    def set_published_at
+      self.published_at ||= Time.current
+    end
 
     def name_to_slug
-      if !slug.present?
-        if parent_id.present?
-          parent = Page.find_by(id: parent_id)
-          self.slug = parent.slug + "/" + Rhinoart::Utils.to_slug(name)
-        else
-          self.slug = Rhinoart::Utils.to_slug(name)
-        end
-      else
-        self.slug = Rhinoart::Utils.to_slug(slug)
-        end
-      end
-
-    class << self
-      def find_by_path(path)
-        where('slug = ? and active = ? and publish_date <= ?', path, true, Time.now).first
-      end
+      slug = name.to_s.parameterize
+      self.slug = ( (parent.present? and parent.active?) ? ( parent.slug + "/" + slug ) : slug ) if self.slug.blank?
     end
+
   end
 end

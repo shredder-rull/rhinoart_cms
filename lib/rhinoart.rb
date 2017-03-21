@@ -1,53 +1,96 @@
+require 'haml'
+require 'slim'
+require 'awesome_nested_set'
+require 'acts_as_list'
+require 'mini_magick'
+require 'carrierwave'
+require 'russian'
+require 'momentjs-rails'
+require 'bootstrap-datepicker-rails'
+require 'bootstrap3-datetimepicker-rails'
+require 'kaminari'
+require 'cancan'
+require 'devise'
+require 'rolify'
+require 'paper_trail'
+require 'ransack'
+require 'cache_method'
+require 'nokogiri'
+require 'font-awesome-sass'
+
+require 'rhinoart/version'
 require 'rhinoart/engine'
-require 'rhinoart/asset_registration'
-require 'rhinoart/work_links'
 
 module Rhinoart
   extend ActiveSupport::Autoload
-  extend AssetRegistration
+  include ActiveSupport::Configurable
 
   eager_autoload do
     autoload :Menu
-    autoload :ViewHelpers
+    autoload :Helpers
+    autoload :Registry
+    autoload :PagesConstraint
   end
 
-  def self.setting(name, value = nil)
-    mattr_accessor name.to_sym
-    self.send("#{name}=", value)
+  configure do |config|
+    config.user_class = 'User'
+
+    config.parent_controller = 'ApplicationController'
+
+    config.order_in_list = :by_date
+
+    config.send_welcome_email = false
+    config.send_new_user_notification_email = false
+    config.send_approving_notification_email = false
+
+    config.mailer_from = nil
+
+    config.user_approving = false
+
+    config.blog_post_template = 'blog/post'
   end
 
-  def self.setup
-    yield self
+  def self.user_class
+    @user_class ||= config.user_class.constantize
   end
 
-  setting('device_namespace', :users)
+  def self.version
+    Rhinoart::VERSION
+  end
 
-  setting('devise_controllers', {
-    sessions: 'rhinoart/sessions',
-    passwords: 'rhinoart/passwords',
-    omniauth_callbacks: 'rhinoart/omniauth_callbacks'
-  })
+  def method_missing(method_name)
+    if config.respond_to? method_name
+      config.public_send(method_name)
+    else
+      super
+    end
+  end
 
-  setting('devise_routes', {
-    class_name: 'Rhinoart::User',
-    module: :devise,
-    controllers: Rhinoart.devise_controllers
-  })
+  # setting('device_namespace', :users)
+  #
+  # setting('devise_controllers', {
+  #   sessions: 'rhinoart/sessions',
+  #   passwords: 'rhinoart/passwords',
+  #   omniauth_callbacks: 'rhinoart/omniauth_callbacks'
+  # })
+  #
+  # setting('devise_routes', {
+  #   class_name: 'Rhinoart::User',
+  #   module: :devise,
+  #   controllers: Rhinoart.devise_controllers
+  # })
+  #
+  # setting('devise_scopes', [
+  #   :database_authenticatable,
+  #   :recoverable,
+  #   :registerable,
+  #   :trackable,
+  #   :validatable,
+  #   :omniauthable,
+  #   :omniauth_providers => [:google_oauth2]
+  # ])
 
-  setting('devise_scopes', [
-    :database_authenticatable, 
-    :recoverable, 
-    :registerable, 
-    :trackable, 
-    :validatable, 
-    :omniauthable, 
-    :omniauth_providers => [:google_oauth2]
-  ])
-
-  setting :copyrights, {
-    name: 'RhinoArt',
-    url: 'http://www.rhinoart.ru',    
-  }
 end
 
-require 'rhinoart/railtie' if defined?(Rails)
+require 'rhinoart/work_links'
+require 'rhinoart/railtie'

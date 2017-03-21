@@ -13,27 +13,24 @@
 #
 
 module Rhinoart
-	class PageComment < Rhinoart::Base
+	class PageComment < Rhinoart::ApplicationRecord
+
+		paginates_per 20
+
 		include ActionView::Helpers
 		before_validation :clear_html
 
-		belongs_to :page, :inverse_of => :page_comment	
+		belongs_to :page, :inverse_of => :page_comment, touch: true, counter_cache: :comments_count
 		accepts_nested_attributes_for :page
 
 		belongs_to :user
 		accepts_nested_attributes_for :user #, :allow_destroy => true
 
+		has_many :children, foreign_key: :parent_id, class_name: self.to_s
+
 		# Validations
 		validates :comment, presence: true
-		validates :comment, length: { minimum: 3, maximum: 1500 }
-
-		after_save :update_page_date
-		after_destroy :update_page_date
-
-		def children
-			PageComment.where('parent_id = ?', self.id)
-		end
-
+		validates :comment, length: { minimum: 2, maximum: 1500 }
 
 		def clear_html
 			self.comment = strip_tags self.comment

@@ -1,12 +1,28 @@
 # encoding: utf-8
 module Rhinoart
 	class ApplicationController < ActionController::Base
-		include ViewHelpers::SessionHelper
+		include Helpers::ApplicationHelper
 
-		before_action :set_locale
-		before_filter :set_current_user
+		before_action :set_current_user
+		before_action :check_user_access
+		before_action :set_paper_trail_whodunnit
 
-		#before_filter :check_uri if Rails.configuration.redirect_to_www
+		rescue_from CanCan::AccessDenied, :with => :access_denied_handler
+
+		private
+
+		def access_denied_handler(exception)
+			if user_signed_in?
+				if !can? :access, :admin_panel
+					redirect_to main_app.root_path, alert: exception.message
+				else
+					flash.now[:info] = "Access denied."
+					render :template => 'rhinoart/shared/no_approved', :status => 403
+				end
+			else
+				redirect_to rhinoart.sign_in_path(redirect_to: request.fullpath), alert: exception.message
+			end
+		end
 
 		def set_locale
 			if current_user.present? && current_user.locales.present? && current_user.locales.count == 1
@@ -14,8 +30,7 @@ module Rhinoart
 			else
 				I18n.locale = params[:locale] || I18n.default_locale
 			end
-		end	
-
+		end
 
 		# Force signout to prevent CSRF attacks
 		def handle_unverified_request
@@ -23,29 +38,22 @@ module Rhinoart
 			super
 		end
 
-		def check_uri
-			redirect_to request.protocol + "www." + request.host_with_port + request.fullpath if !/^www/.match(request.host)
-		end
-
-
 		def default_url_options(options={})
 			if I18n.locale != I18n.default_locale
 				{ locale: I18n.locale }
 			else
 				{ locale: nil }
 			end
-		end	
+		end
 
-		def set_current_user
-			User.current = current_user
-    end
+		def check_user_access
+			authorize! :access, :admin_panel
+		end
 
-		private     
-			def correct_user
-				if params[:id]
-					@user = User.find(params[:id])
-					redirect_to(root_path) unless current_user?(@user)   
-				end
-			end
+		def translate(key, options = {})
+			I18n.t("rhinoart.#{key}", {default: [:key]}.merge(options))
+		end
+		alias_method :t, :translate
+
 	end
 end

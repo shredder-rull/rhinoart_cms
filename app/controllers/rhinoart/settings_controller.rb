@@ -1,7 +1,7 @@
 require_dependency "rhinoart/application_controller"
 
 module Rhinoart
-	class SettingsController < BaseController
+	class SettingsController < ApplicationController
 		before_action { authorize! :manage, :settings }
 		before_action :set_admin_setting, only: [:edit, :update, :destroy]
 

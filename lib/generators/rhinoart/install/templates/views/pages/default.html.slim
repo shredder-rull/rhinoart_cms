@@ -1,0 +1,6 @@
+- provide(:title, @page.title)
+- provide(:metatags, meta_tags(@page))
+
+h1= page_title(@page)
+
+=raw @page.content

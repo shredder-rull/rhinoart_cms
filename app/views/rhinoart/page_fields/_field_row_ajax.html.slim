@@ -1,0 +1,3 @@
+= fields_for :page, @field.page || Rhinoart::Page.new(fields: [@field]) do |f|
+  = f.fields_for :fields, [@field], child_index: rand(1000..3000) do |pf|
+    = render 'field_row', pf: pf

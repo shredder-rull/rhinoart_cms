@@ -1,0 +1,39 @@
+.control-group
+  .controls
+    .tabbable
+      ul#tabs.nav.nav-tabs
+        - if f.object.contents.any?
+          - f.object.contents.each_with_index do |ob, index|
+            li.nav-item
+              a.nav-link data-toggle='tab' href="##{"tab-#{ob.name}"}" rel="tab#{ob.id}" class=('active' if index == 0)
+                span>= t(ob.name, default: ob.name.camelize)
+                /- if !disabled_page?(@page)
+                /  = icon('remove', class: 'del_tab')
+        - else
+          li.nav-item.active
+            a.nav-link data-toggle="tab_0" href="#" rel="tab_0"
+              = t('_NO_MAIN_CONTENT')
+        /TODO: develop functional for add content
+        /li.nav-item.pull-right
+        /  a.nav-link#add_content href="#tab_add"= icon('plus-circle')
+      .tab-content
+        - i = 0
+        = f.fields_for :contents do |c|
+          div.tab-pane class=('active' if i == 0) id="tab-#{c.object.name}"
+            = c.hidden_field :id
+            = c.hidden_field :name
+            = c.text_area :content, class: 'form-control'
+          - i += 1
+
+- content_for :javascript do
+  = stylesheet_link_tag    "redactor/redactor"
+  = javascript_include_tag "redactor/redactor"
+  javascript:
+    $('.tab-pane > textarea').redactor({ 
+        autoresize: true,
+        minHeight: 300, 
+        maxHeight: 1200,
+        'imageUpload': '#{upload_image_path(id: @page.id)}',
+        'imageGetJson': '#{image_list_path}',
+        'fileUpload': '#{upload_file_path(id: @page.id)}'
+    });

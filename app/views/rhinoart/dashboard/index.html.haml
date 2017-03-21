@@ -1,22 +1,16 @@
 - provide(:title, "Sidebar")
+.box
+  .box-header
+    %h2
+      = icon('signal');
+      %span.break
+      = t('recent_activity')
 
-
-.row-fluid
-	.box.span12
-		.box-header
-			%h2
-				%i.halflings-icon.signal
-				%span.break
-				= t('recent_activity')				
-
-		.box-content
-			- if @users.present?
-				- @users.each do |user| 	
-					- works = PaperTrail::Version.where('whodunnit = ? and created_at > ?', user, 1.week.ago).order(created_at: :desc).limit(10)
-					%legend= link_to user.name, rhinoart.user_path(locale: :en, id: user)
-					= render 'user_activity', works: works
-			- else
-				= t('no_activity')		
-
-
-
+  .box-content
+    - if @activities.present?
+      - @activities.group_by(&:whodunnit).each do |user_id, activities|
+        - user = @users[user_id.to_i].try(:first)
+        %legend= link_to user_name(user), rhinoart.user_path(id: user)
+        = render 'user_activity', activities: activities.slice(0, 10)
+    - else
+      = t('no_activity')

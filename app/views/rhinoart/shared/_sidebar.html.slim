@@ -1,0 +1,9 @@
+#sidebar-left
+  .nav-collapse.sidebar-nav
+    ul.nav.nav-tabs.nav-stacked.main-menu
+      - Rhinoart::Menu::MainMenu.items.each do |item|
+        - if menu_item_allowed?(item)
+          li.nav-item class="#{'active' if menu_item_active?(item)}"
+            = link_to menu_item_link(item), class: 'nav-link' do
+              = icon(item.icon)
+              span.hidden-tablet= t(item.label)

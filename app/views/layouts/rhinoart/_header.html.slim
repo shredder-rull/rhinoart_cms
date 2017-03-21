@@ -1,0 +1,38 @@
+nav.navbar.navbar-toggleable-sm.navbar-inverse.bg-inverse.navbar-header
+  button.navbar-toggler.navbar-toggler-right aria-controls="navbarHeader" aria-expanded="false" aria-label=("Toggle navigation") data-target="#navbarHeader" data-toggle="collapse" type="button"
+    span.navbar-toggler-icon
+  a.navbar-brand href="/"  Rhinoart CMS
+  //
+  #navbarHeader.collapse.navbar-collapse
+    /ul.navbar-nav.mr-auto
+    /  li.nav-item.active
+    /    a.nav-link href="#"
+    /      | Home
+    /      span.sr-only (current)
+    /  li.nav-item
+    /    a.nav-link href="#"  Features
+    /  li.nav-item
+    /    a.nav-link href="#"  Pricing
+
+    ul.navbar-nav.ml-auto
+      - if can? :manage, :settings
+        li= link_to icon('wrench'), rhinoart.settings_path, class: 'nav-link'
+      li.nav-item.dropdown
+        a#navbarDropdownMenuLink.nav-link.dropdown-toggle aria-expanded="true" aria-haspopup="true" data-toggle="dropdown" href="#"
+          span> = icon('user')
+          = user_name(current_user)
+
+        .dropdown-menu.dropdown-menu-right aria-labelledby="navbarDropdownMenuLink"
+          = link_to rhinoart.edit_user_path(id: current_user.id), class: 'dropdown-item' do
+            = icon('user')
+            span< Profile
+
+          = link_to rhinoart.sign_out_path, :method => :delete, class: 'dropdown-item' do
+            = icon('sign-out')
+            span< Logout
+          - if available_locales.compact.present?
+            .dropdown-divider
+            - (available_locales || []).compact.each do |locale|
+              = link_to rhinoart.root_path(locale: locale), class: 'dropdown-item' do
+                span>= icon('flag')
+                = t(locale)

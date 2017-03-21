@@ -1,5 +1,9 @@
 - provide(:title, "Edit user")
 
-.span8.offset1
-  %h1 Update your profile
-  = render 'form'
+.box-header
+  %h2
+    = icon('user')
+    Edit profile
+.box-content
+  .row
+    .col-md-8.offset-sm-1.col-lg-6= render 'form'

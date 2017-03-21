@@ -1,30 +1,18 @@
-%ul.nav.nav-tabs.nav-stacked
-  %li{class: "#{params[:id].to_i == p.id.to_i ? 'active' : ''}", id: "cat_#{p.id}"}
-    %span
-      = link_to '', pages_path(parent: p.id), remote: true, class: "toogle icon-plus" if page_tree(p).present?
-      - if p.ptype != Rhinoart::Page::TUPES[:page].to_s.downcase
-        = link_to children_page_path(p), class: page_tree(p).present? ? '' : 'children' do
-          = p.name
-          - if !p.active
-            %span.label.label-important Hidden
+- @tree_ids ||= []
+%ul.nav.nav-pils.flex-column
+  - pages.each do |page|
+    %li.nav-item{class: ('active' if params[:id].to_i == page.id.to_i), id: "cat_#{page.id}"}
+      .nav-link.flex
+        = link_to '', pages_path(parent: page.id), remote: true, class: "toogle fa fa-#{ @tree_ids.include?(page.id) ? 'minus' : 'plus' }" if page.children.exists?
 
-        = link_to edit_page_path(p), class: 'edit-article-item' do
-          %span.halflings-icon.edit
+        = link_to children_page_path(page), class: "#{ 'children' if page.children.exists? }" do
+          = page.name
+        - if !page.active
+          %span.badge.badge-warning> Hidden
 
-      - else
-        = link_to edit_page_path(p), class: page_tree(p).present? ? '' : 'children' do
-          = p.name
-          - if !p.active
-            %span.label.label-important Hidden
-    %hr/
-    - if @tree_ids.present? && @tree_ids.include?(p.id)
-      - pages = page_tree(p)
-      - if pages.present?
-        - pages.each do |children|
-          = render 'rows', p: children
-      = content_for :javascript do
-        :javascript
-          $(function(){
-          	$('#cat_#{p.id} span a.toogle').first().addClass('icon-minus');
-          	$('#cat_#{p.id} span a.toogle').first().removeClass('icon-plus');
-          })
+        = link_to icon('edit'), edit_page_path(page.id), class: 'nav-link-edit'
+      %hr/
+      - if @tree_ids.present? && @tree_ids.include?(page.id)
+        - pages = page.children
+        - if pages.any?
+          = render 'rows', pages: pages

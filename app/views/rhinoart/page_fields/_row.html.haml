@@ -1,10 +1,10 @@
 .control-group
   %label.control-label{for: "page_page_fields_name"}= t field.name
   .controls
-    - if (field.ftype == "text")
+    - if (field.type == "text")
       = text_field_tag("page[page_field_attributes][#{index}][value]", field.value, class: "span11")
     - else
-      - if (field.ftype == "textarea")
+      - if (field.type == "textarea")
         = text_area_tag "page[page_field_attributes][#{index}][value]", field.value, rows: 10, cols: 25, class: "span11"
       - else
         = text_field_tag "page[page_field_attributes][#{index}][value]", field.value, class: "span11"

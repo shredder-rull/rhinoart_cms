@@ -1,20 +1,3 @@
-require 'haml'
-require 'acts_as_list'
-require 'mini_magick'
-require 'carrierwave'
-require 'russian'
-require 'bootstrap-datepicker-rails'
-require 'will_paginate'
-require 'cancan'
-require 'delayed_job_active_record'
-require 'devise'
-require 'rolify'
-require 'globalize'
-require 'globalize-accessors'
-require 'globalize-versioning'
-require 'paper_trail'
-require 'omniauth-google-oauth2'
-
 module Rhinoart
   class Engine < ::Rails::Engine
     isolate_namespace Rhinoart
@@ -25,13 +8,28 @@ module Rhinoart
 
     initializer 'rhinoart.extend_action_view' do
       ActiveSupport.on_load :action_view do
-        include ViewHelpers::ApplicationHelper
-        include ViewHelpers::MenuHelper
-        include ViewHelpers::PagesHelper
-        include ViewHelpers::SessionHelper
-        include ViewHelpers::UsersHelper
+        include Helpers::PagesHelper
+        self.field_error_proc = proc{|html_tag, instance| html_tag}
       end
     end
+
+    initializer 'rhinoart.extend_action_controller' do
+      ActiveSupport.on_load :action_controller do
+
+      end
+    end
+
+    initializer 'rhinoart.registry_middleware' do
+      Rails.application.config.middleware.use Rhinoart::Registry::Middleware
+    end
+
+    initializer 'rhinoart.locales' do
+      Rails.application.config.i18n.available_locales = [:en, :ru]
+    end
+
+    # initializer 'rhinoart.remove_field_error_wrapper' do
+    #   Rails.application.config.action_view.field_error_proc = proc{|html_tag, instance| html_tag}
+    # end
 
   end
 end

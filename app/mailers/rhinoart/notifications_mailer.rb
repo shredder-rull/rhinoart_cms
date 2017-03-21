@@ -1,6 +1,7 @@
 module Rhinoart
     class NotificationsMailer < ActionMailer::Base
-        default from: Rails::configuration.action_mailer.default_url_options.present? ? Rails::configuration.action_mailer.default_url_options[:default_email] : 'no-reply@amko.pro'
+
+        default from: Rhinoart.config.mailer_from if Rhinoart.config.mailer_from.present?
 
         def new_user_notification(user, mail_to)
             @user = user

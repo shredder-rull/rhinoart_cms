@@ -1,7 +1,7 @@
 require_dependency "rhinoart/application_controller"
 
 module Rhinoart
-	class PageFieldsController < BaseController
+	class PageFieldsController < ApplicationController
 		def new
 		end
 
@@ -17,19 +17,19 @@ module Rhinoart
 			end	
 		end
 
-	    def destroy
-	    	begin
-	            @field = PageField.find(params[:id])
-	    		@field.destroy
-	    	rescue
-	    	end        
+		def destroy
+			begin
+				@field = PageField.find(params[:id])
+				@field.destroy
+			rescue
+			end
 
-	        respond_to do |format|
-	            format.js { }
-	        end
-	    end
+			respond_to do |format|
+					format.js { }
+			end
+		end
 
-	    def upload_image
+	  def upload_image
 			FieldUploader.configure do |config|
 				config.store_dir = 'uploads/images/pages'
 			end

@@ -1,0 +1,26 @@
+- index = rand(1000..3000)
+div id="field_#{pf.object.id || index}"
+  - page = pf.object.page
+  = pf.hidden_field :id
+  = pf.hidden_field :name
+  = pf.hidden_field :type
+  .form-group.row
+    = pf.label :value, t(pf.object.name, default: pf.object.name.camelize), class: 'col-form-label col-sm-3'
+    .col-sm-9.relative
+      - case pf.object.type
+      - when 'textarea'
+        = pf.text_area :value, rows: 3, class: 'form-control', readonly: disabled_page?(page)
+      - when 'file'
+        = pf.text_field :value, pf.object.id, readonly: true, value: pf.object.attachment.try(:file_url), class: 'form-control file_str'
+        span.input-group-btn
+          = link_to t("_BTN_IMG"), '#', class: "btn", onclick: "$(this).parent().find('input:file').trigger('click');return false;"
+          = pf.fields_for :attachment do |attachment|
+            = attachment.file_field :file, class: 'hidden'
+      - when 'boolean'
+        = pf.check_box :value
+      - else
+        = pf.text_field :value, class: 'form-control' , readonly: disabled_page?(page)
+
+      - if !disabled_page?(page)
+        = link_to icon('plus-circle'), '#mdFieldAdd', data: { toggle: "modal" }, class: 'add-field-link'
+        = link_to icon('minus-circle'), page_field_path(pf.object.id || index), method: 'delete', remote: true, data: { confirm: t('_DELETE_CONFIRM') }, class: 'remove-field-link'

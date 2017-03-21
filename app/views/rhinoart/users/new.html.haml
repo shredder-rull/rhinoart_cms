@@ -1,7 +1,9 @@
-- provide(:title, t(:_USERS) )
+- provide(:title, "New user")
 
-
-.row
-  .span8.offset1
-    %h1= t :_NEW_USER
-    = render 'form'
+.box-header
+  %h2
+    = icon('user')
+    Edit profile
+.box-content
+  .row
+    .col-md-8.offset-sm-1.col-lg-6= render 'form'

@@ -1,5 +1,5 @@
 - if object.errors.any?
-  .alert.alert-error
+  .alert.alert-danger
     %h4.alert-heading
       Found #{pluralize(object.errors.full_messages.count, 'error')}!
     - object.errors.full_messages.each do |msg|

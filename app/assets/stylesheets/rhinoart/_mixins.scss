@@ -1,0 +1,13 @@
+@mixin gradient() {
+  /* Firefox 3.6+ */
+  background-image: -moz-linear-gradient(left, rgba(249, 249, 249, 0.25) 0%, #B9B9B9 50%, rgba(249, 249, 249, 0.25) 100%);
+
+  /* Safari 4+, Chrome 1+ */
+  background-image: -webkit-linear-gradient(left, rgba(249, 249, 249, 0.25) 0%, #B9B9B9 50%, rgba(249, 249, 249, 0.25) 100%);
+
+  /* Safari 5.1+, Chrome 10+ */
+  background-image: -o-linear-gradient(left, rgba(249, 249, 249, 0.25) 0%, #B9B9B9 50%, rgba(249, 249, 249, 0.25) 100%);
+
+  /* Opera 11.10+ */
+  background-image: linear-gradient(left, rgba(249, 249, 249, 0.25) 0%, #B9B9B9 50%, rgba(249, 249, 249, 0.25) 100%);
+}

@@ -1,14 +1,18 @@
-- provide(:title, t(:_NEW_PAGE))
 - content_for :sidebar_l2 do
   #sidebar-left2.span3
     .nav-collapse.sidebar-nav
-      %ul.nav.nav-tabs.nav-stacked
-        - page_tree.each do |p|
-          = render 'rows', p: p, level: 0
-= form_for @page, :multipart => true do |f|
-  %legend= t(:_NEW_PAGE)
-  = render 'fields', f: f
-= render 'rhinoart/page_fields/form', page: @page
+      = render 'rows', pages: page_tree
+
+- provide(:title, t(:_NEW_PAGE))
+.box-header
+  %h2
+    = icon('newspaper-o')
+    %span.break
+    = t(:_NEW_PAGE)
+.box-content
+  = render 'form'
+
+
 - content_for :javascript do
   :javascript
     <!--

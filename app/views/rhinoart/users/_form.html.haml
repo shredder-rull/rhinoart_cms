@@ -1,68 +1,67 @@
-= form_for @user, {html: {class: 'form-horizontal'}} do |f|
-	= render 'rhinoart/shared/error_messages', object: f.object
-	= hidden_field_tag :redirect_to, params[:redirect_to] if params[:redirect_to].present?
-	
-	.avatar
-		- if f.object.avatar.present?
-			= image_tag f.object.avatar.try(:thumb), width: 84, height: 84
-		- else
-			= image_tag 'rhinoart/bg-noimage.png'
+= form_for @user do |f|
+  = render 'rhinoart/shared/error_messages', object: f.object
+  = hidden_field_tag :redirect_to, params[:redirect_to] if params[:redirect_to].present?
 
-		.image_field
-			= f.file_field :avatar
+  - if f.object.has_attribute?(:avatar)
+    .avatar
+      - if f.object.avatar.present?
+        = image_tag f.object.avatar.try(:thumb), width: 84, height: 84
+      - else
+        = image_tag 'rhinoart/bg-noimage.png'
 
-	.control-group
-		= f.label :email, class: 'control-label'
-		.controls
-			= f.email_field :email, required: true
+      .image_field
+        = f.file_field :avatar
 
-	.control-group
-		= f.label :name, class: 'control-label'
-		.controls
-			= f.text_field :name
+  .form-group.row
+    = f.label :email, class: 'col-form-label col-sm-3'
+    .col-sm-9
+      = f.email_field :email, required: true, class: 'form-control'
 
-	.control-group
-		= f.label :password, class: 'control-label'
-		.controls
-			= f.password_field :password
-			%small.help-inline
-				8+ characters
-	
-	- if can? :manage, :user_roles
-		.control-group
-			= f.label :admin_role, class: 'control-label'
-			.controls
-				- Role.where(name: Rhinoart::User::ADMIN_PANEL_ROLES).each do |role| 
-					= f.label :role do	
-						= check_box_tag "user[role_ids][]", role.id, @user.role_ids.include?(role.id), id: dom_id(role) 
-						= role.name
+  .form-group.row
+    = f.label :first_name, class: 'col-form-label col-sm-3'
+    .col-sm-9
+      = f.text_field :first_name, class: 'form-control'
 
-	- if can? :manage, :users
-		.control-group
-			= f.label :frontend_role, class: 'control-label'
-			.controls
-				- Role.where(name: Rhinoart::User::FRONTEND_ROLES).each do |role| 
-					= f.label :role do	
-						= check_box_tag "user[role_ids][]", role.id, @user.role_ids.include?(role.id), id: dom_id(role) 
-						= role.name
+  .form-group.row
+    = f.label :last_name, class: 'col-form-label col-sm-3'
+    .col-sm-9
+      = f.text_field :last_name, class: 'form-control'
 
+  .form-group.row
+    = f.label :password, class: 'col-form-label col-sm-3'
+    .col-sm-9
+      = f.password_field :password, class: 'form-control'
+      %small.help-inline
+        8+ characters
+  
+  - if can? :manage, :user_roles
+    .form-group.row
+      = f.label :admin_role, class: 'col-form-label col-sm-3'
+      .col-sm-9
+        - Role.where(name: Rhinoart::Role.backend_roles).each do |role|
+          %div
+            = f.label :role, for: dom_id(role) do
+              = check_box_tag "user[role_ids][]", role.id, @user.role_ids.include?(role.id), id: dom_id(role)
+              = t("roles.#{role.name}")
 
-	.control-group
-		= f.label :approved, class: 'control-label'
-		.controls
-			= f.check_box :approved
+  - if f.object.has_attribute? :approved
+    .form-group.row
+      = f.label :approved, class: 'control-label'
+      .col-sm-9
+        = f.check_box :approved
 
-	- if I18n.available_locales.count > 1
-		.control-group
-			= f.label :locales, class: "control-label"
-			.controls
-				= f.select :locales, I18n.available_locales, {}, { :multiple => true, :size => 4 }
+  - if I18n.available_locales.count > 1 and f.object.respond_to?(:locales=)
+    .form-group.row.ml0.mr0
+      = f.label :locales, class: "col-form-label col-sm-3"
+      .col-sm-9
+        = f.select :locales, I18n.available_locales.map{|l| [t(l), l]}, {}, { :multiple => true, :size => 4, class: 'form-control' }
 
 
-	.form-actions
-		= f.submit 'Save', class: 'btn btn-primary', data: { disable_with: 'Saving...'}
-		- if f.object.persisted?
-			%span.muted or
-			= link_to 'Clear all access rights', user_path(f.object, clear_rights: true), method: :delete, data: { confirm: 'Are you sure?' }, class: 'btn btn-danger'
+  .form-group.row
+    .col-sm-9.offset-md-3
+      = f.submit 'Save', class: 'btn btn-primary', data: { disable_with: 'Saving...'}
+      - if f.object.persisted?
+        %span<> or
+        = link_to 'Clear all access rights', user_path(f.object, clear_rights: true), method: :delete, data: { confirm: 'Are you sure?' }, class: 'btn btn-danger'
 
 

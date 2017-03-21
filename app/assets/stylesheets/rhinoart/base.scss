@@ -1,0 +1,124 @@
+@import "acme/bootstrap";
+@import "acme/bootstrap-responsive";
+@import "font-awesome-sprockets";
+@import "font-awesome";
+
+/* Import Section
+=================================================================== */
+@import "acme/jquery-ui-1.8.21.custom";								/* jQuery User Interface Framework Styles */
+@import "acme/fullcalendar";										/* Calendars Styles */
+@import "acme/chosen";												/* Select Boxes Styles */  
+@import "acme/uniform.default";										/* Uniform Styles */
+@import "acme/jquery.cleditor";										/* Text Editor Styles. */  
+@import "acme/jquery.noty";											/* Noty Notifications Style */
+@import "acme/noty_theme_default";									/* Noty Notifications Style */
+@import "acme/elfinder.min";										/* File Manager Style */
+@import "acme/elfinder.theme";										/* File Manager Style */
+@import "acme/jquery.iphone.toggle";								/* Styles for iPhone */
+@import "acme/uploadify";											/* Uploadify Styles */
+@import "acme/jquery.gritter";										/* Growl Like Notifications Styles */
+
+
+@import "acme/style";
+
+@import "acme/style-responsive";
+
+
+@mixin gradient() {
+	/* Firefox 3.6+ */
+	background-image: -moz-linear-gradient(left, rgba(249, 249, 249, 0.25) 0%, #B9B9B9 50%, rgba(249, 249, 249, 0.25) 100%);
+
+	/* Safari 4+, Chrome 1+ */
+	background-image: -webkit-linear-gradient(left, rgba(249, 249, 249, 0.25) 0%, #B9B9B9 50%, rgba(249, 249, 249, 0.25) 100%);
+
+	/* Safari 5.1+, Chrome 10+ */
+	background-image: -o-linear-gradient(left, rgba(249, 249, 249, 0.25) 0%, #B9B9B9 50%, rgba(249, 249, 249, 0.25) 100%);
+
+	/* Opera 11.10+ */
+	background-image: linear-gradient(left, rgba(249, 249, 249, 0.25) 0%, #B9B9B9 50%, rgba(249, 249, 249, 0.25) 100%);
+}
+
+body {background: asset_url('rhinoart/bg-light.png');}
+
+/* linear-gradient(to right, rgba(249, 249, 249, 0.25) 0%, #B9B9B9 50%, rgba(249, 249, 249, 0.25) 100%) */
+
+
+
+
+.input-group-btn_ {
+	right: 74px;
+	position: absolute;	
+}
+
+.redactor_editor {
+	border: 1px solid silver;
+	border-top: 0;	
+}
+
+form {
+	margin: 0;
+}
+
+.form-horizontal {
+	.controls {
+		margin-left: 125px;
+	}
+	.control-label {
+		width: 115px;
+	}	
+}
+
+/* Table sort */
+table.tablesorter thead tr .header {
+  background-image: asset_url('bg-sort.gif');
+  background-repeat: no-repeat;
+  background-position: center right;
+  cursor: pointer;
+  min-width: 100px;
+  line-height: 30px;
+
+}
+
+.headerSortUp, .headerSortDown {
+  background-color: rgb(251, 245, 229);
+}
+table.tablesorter thead tr .headerSortUp {
+  background-image: asset_url('asc.gif');
+}
+table.tablesorter thead tr .headerSortDown {
+  background-image: asset_url('desc.gif');
+}
+
+.btn {
+	font-weight: bold;
+
+	&:hover {
+		box-shadow: 0px 0px 0px rgba(0, 0, 0, 0.2), 0 1px 1px;
+		text-shadow: none;
+	}
+}
+
+.navbar-inner a {
+  text-shadow: none;
+}
+
+.nav-sub-item {
+	margin-top: 6px;
+}
+
+.offset-bottom1 {
+  margin-bottom: 20px;
+}
+
+.offset-bottom2 {
+  margin-bottom: 40px;
+}
+
+.text-center {
+  text-align: center;
+}
+
+.avatar {
+    position: absolute;
+    right: 100px;	
+}

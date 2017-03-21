@@ -1,0 +1,58 @@
+= form_for @page, :multipart => true do |f|
+
+  .row
+    .col-md-10
+      = render 'rhinoart/shared/error_messages', object: f.object
+      = f.hidden_field :type
+
+      .form-group.row
+        = f.label :parent_id, class: 'col-form-label col-sm-3'
+        .col-sm-9
+          - if f.object.type == Rhinoart::Page::TYPE::BLOG.to_s
+            = f.select :parent_id, nested_set_options(Rhinoart::Page.blog.self_and_descendants, f.object){|i| "#{'-' * i.level} #{i.name}" }, {}, {readonly: disabled_page?(f.object), class: 'form-control'}
+          - else
+            = f.select :parent_id, nested_set_options(Rhinoart::Page, f.object){|i| "#{'-' * i.level} #{i.name}" }, {prompt: 'No Parent'}, {readonly: disabled_page?(f.object), class: 'form-control'}
+
+      .form-group.row
+        = f.label :name, class: 'col-form-label col-sm-3'
+        .col-sm-9
+          = f.text_field :name, readonly: disabled_page?(f.object), class: 'form-control'
+
+      .form-group.row
+        = f.label :slug, class: 'col-form-label col-sm-3'
+        .col-sm-9.relative
+          = f.text_field :slug, readonly: disabled_page?(f.object), class: 'form-control', placeholder: 'Skip to autogenerate'
+          - if f.object.fields.empty?
+            = link_to icon('plus-circle'), '#mdFieldAdd', data: {toggle: 'modal'}, class: 'add-field-link'
+      - build_default_fields(f.object)
+      = render 'page_fields', f: f
+
+      .form-group.row
+        = f.label :published_at, class: 'col-form-label col-sm-3'
+        .input-group.pdate.col-sm-9 data-date-format="mm/dd/yyyy"
+          = f.text_field :published_at, value: f.object.published_at.try(:strftime, '%m/%d/%Y'), class: 'form-control date-picker', placeholder: 'mm/dd/yyyy'
+          .input-group-addon= icon('calendar')
+
+      - if [Rhinoart::Page::TYPE::ARTICLE.to_s, Rhinoart::Page::TYPE::BLOG.to_s].include?(f.object.type)
+        .form-group.row
+          = f.label :user, 'Author', class: 'col-form-label col-sm-3'
+          .col-sm-9
+            - f.object.user_id = current_user.id
+            = f.select :user_id, Rhinoart.user_class.approved.map{|u| [user_name(u), u.id]}, {include_blank: true}, {class: 'form-control'}
+
+      .row
+        = f.label :active, class: 'col-form-label col-sm-3'
+        .col-sm-9= f.check_box :active
+
+  br
+  .row
+    .col-lg-10.col-md-12= render 'content_row', f: f
+  .form-group.row
+    .col-sm-3= f.button t('_BTN_SAVE'), class: 'btn btn-primary btn-block'
+    .col-sm-3= f.button t('_BTN_SAVE_AND_CONTINUE'), class: 'btn btn-success btn-block', name: 'continue', value: 'continue'
+    .col-sm-3= link_to t('_BTN_CANCEL'), pages_path, class: 'btn btn-secondary btn-block'
+
+
+
+- content_for :javascript do
+  = render 'rhinoart/page_fields/form', page: @page

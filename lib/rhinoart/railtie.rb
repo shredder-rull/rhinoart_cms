@@ -1,22 +1,19 @@
 module Rhinoart
   class Railtie < Rails::Railtie
 
-    initializer "rhinoart_railtie.add_precompile_assets" do |app|
+    initializer 'rhinoart_railtie.add_precompile_assets' do |app|
 
-      Rhinoart.stylesheets.each do |path, _|
-        app.config.assets.precompile << path
-      end
+      ActiveSupport.on_load(:action_controller) do
 
-      Rhinoart.javascripts.each do |path|
-        app.config.assets.precompile << path
       end
 
       app.config.assets.precompile += %w[
+        rhinoart_admin.js
+        rhinoart_admin.css
         jquery.tablesorter.js
         redactor/redactor.css
         redactor/redactor.js
-        rhinoart/*.jpg
-        rhinoart/*.png
+        rhinoart/*.gif
       ]
 
     end

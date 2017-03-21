@@ -1,0 +1,22 @@
+#mdFieldAdd.modal.fade
+  .modal-dialog role='dialog'
+    - @field ||= Rhinoart::PageField.new(page: page)
+    = form_for @field, url: page_fields_path, remote: true, html: {class: 'modal-content'} do |pf|
+      = pf.hidden_field :page_id
+      .modal-header
+        h3.modal-title Add field
+        button.close aria-hidden="true" data-dismiss="modal" type="button" ×
+      .modal-body
+        #pf_errors
+        .form-group.row
+          = pf.label :name, class: 'col-form-label col-sm-3'
+          .col-md-9
+            = pf.text_field :name, class: 'form-control'
+        .form-group.row
+          = pf.label :type, class: 'col-form-label col-sm-3'
+          .col-md-9
+            = pf.select :type, Rhinoart::PageField::TYPES.map{|ft| [t("field_types.#{ft}"), ft]}, {}, class: 'form-control'
+      .modal-footer
+        .control-group
+          .controls
+            = pf.button t("_BTN_SAVE"), class: "btn btn-primary"

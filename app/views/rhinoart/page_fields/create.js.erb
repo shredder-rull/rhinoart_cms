@@ -1,7 +1,7 @@
 <% if @field.errors.any? %>
 	$('#pf_errors').html('<%= escape_javascript(render("rhinoart/shared/error_messages", object: @field, :formats => [:html])) %>');
 <% else %>
-	$('#ajax_field_add').append('<%= escape_javascript(render("field_row", object: @field, :formats => [:html])) %>');
+	$('#ajax_field_add').append('<%= escape_javascript(render("field_row_ajax", :formats => [:html])) %>');
 	$('#mdFieldAdd').modal('hide');
 	$(':input','#mdFieldAdd').val('');
 	$('#pf_errors').html('');

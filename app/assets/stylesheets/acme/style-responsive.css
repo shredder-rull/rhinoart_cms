@@ -17,13 +17,6 @@
 		margin: 0px 0px 0px -20px;
 	}
 	
-	footer {
-		margin: 20px -20px 0px -20px;
-		padding: 10px 20px;
-		position: relative;
-		z-index: 2;
-	}
-	
 }
 
 /* Higher than 960 (desktop devices)
@@ -110,13 +103,6 @@
 		font-size: 16px;
 		margin-bottom: 5px;	
 	}
-
-	footer {
-		margin: 20px -20px 0px -20px;
-		padding: 10px 20px;
-		position: relative;
-		z-index: 2;
-	}
 	
 }
 
@@ -155,13 +141,6 @@
 	.btn-navbar {
 		display: none !important;
 	}
-	
-	.nav-collapse,
-  	.nav-collapse.collapse {
-    	height: auto !important;
-    	overflow: visible !important;
-		margin-left: -20px !important;
-  	}
 	
 	.sidebar-nav{
 		padding:0;
@@ -271,13 +250,6 @@
 
 	.timeslot .task span span.remaining{
 		font-size: 12px;
-	}
-	
-	footer {
-		margin: 20px -20px 0px -20px;
-		padding: 10px 20px;
-		position: relative;
-		z-index: 2;
 	}
 	
 }
@@ -450,12 +422,6 @@
 		display: none;
 	}
 	
-	footer {
-		padding: 10px 20px;
-		position: relative;
-		z-index: 2;
-	}
-	
 }
 
 /* Mobile Portrait Size to Mobile Landscape Size (devices and browsers)
@@ -501,12 +467,6 @@
 	
 	.pagination {
 		padding: 5px;
-	}
-	
-	
-	
-	footer {
-		padding: 10px 20px;
 	}
 	
 }

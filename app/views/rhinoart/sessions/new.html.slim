@@ -1,0 +1,24 @@
+- provide(:title, t(:_AUTORIZATION))
+.form-login-wrapper
+  h1 Authorization
+  br
+  .form-login
+    = render 'rhinoart/shared/flash_messages'
+    = form_for(resource, as: resource_name, url: rhinoart.sign_in_path) do |f|
+      = hidden_field_tag :redirect_to, params[:redirect_to] if params[:redirect_to].present?
+      .form-group
+        = f.label :email
+        = f.email_field :email, class: 'form-control'
+      .form-group
+        = f.label :password
+        = f.password_field :password, class: 'form-control'
+      - if devise_mapping.rememberable?
+        .form-group
+          .form-check
+            = f.label :remember_me, class: 'form-check-label' do
+              = f.check_box :remember_me, class: 'form-check-input'
+              | Remember me
+      .row.justify-content-center
+        .col.col-sm-6
+          = f.submit t("Sign in"), class: 'btn btn-success btn-block'
+      = render "devise/shared/links"

@@ -1,0 +1,38 @@
+tr.content-t id="row-#{p.id}"
+  td class="level level_#{p.depth}"
+    = link_to p.name, edit_page_path(p), class: 'title'
+    i: sup= p.id
+    = image_tag('rhinoart/spinner.gif', class: 'loading hidden')
+  td
+    = (p.active?) ? t(:_BTN_PUBLIC) : content_tag(:span, t(:_BTN_HIDDEN), class: 'label label-important')
+  td.nowrap
+    .dropdown
+      a.btn.btn-secondary.dropdown-toggle.btn-sm data-toggle='dropdown' href='#'
+        = t :_ACTIONS
+      .dropdown-menu.dropdown-menu-right
+        = link_to new_children_page_path(p), class: 'dropdown-item' do
+          = icon('plus')
+          span<= t(:_ADD_SUBPAGE)
+
+        = link_to edit_page_path(p), class: 'dropdown-item' do
+          = icon('edit')
+          span<= t(:_EDIT)
+
+        = link_to showhide_page_path(p), class: 'dropdown-item' do
+          = p.active? ? icon('eye-slash') : icon('eye')
+          span<= p.active? ? t(:_HIDE) : t(:_SHOW)
+
+        - if !disabled_page?(p)
+          .dropdown-divider
+
+          = link_to page_up_path(p), class: 'dropdown-item' do
+            = icon('arrow-up')
+            span<= t(:_MOVE_UP)
+
+          = link_to page_down_path(p), class: 'dropdown-item' do
+            = icon('arrow-down')
+            span<= t(:_MOVE_DOWN)
+
+          = link_to page_path(p), class: 'dropdown-item', :method => :delete, :data => { :confirm => t('_DELETE_CONFIRM') } do
+            = icon('trash')
+            span<= t(:_DELETE)

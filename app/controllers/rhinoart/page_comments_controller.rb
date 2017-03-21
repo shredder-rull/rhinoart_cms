@@ -1,13 +1,13 @@
 require_dependency "rhinoart/application_controller"
 
 module Rhinoart
-  class PageCommentsController < BaseController
+  class PageCommentsController < ApplicationController
     before_action { authorize! :manage, :content }
     before_action :set_page_comment, only: [:edit, :update, :destroy]
 
     def index
     	store_location
-      @page_comments = PageComment.where('parent_id is null').order('page_id, approved, updated_at').paginate(page: params[:page])
+      @page_comments = PageComment.where('parent_id is null').order('page_id, approved, updated_at').page(params[:page])
     end
 
     def edit

@@ -1,10 +1,10 @@
 require_dependency "rhinoart/application_controller"
 
 module Rhinoart
-	class CachesController < BaseController
+	class CachesController < ApplicationController
 		def clear
 			begin
-				FileUtils.rm_rf(Dir['tmp/cache/[^.]*'])	
+				Rails.cache.clear
 			rescue Exception => e
 				flash[:info] = e.message
 			end

@@ -208,13 +208,13 @@ ru:
         menu: Отображать в меню
         active: Активность
         parent_id: Родительский раздел
-        ptype: Тип раздела
+        type: Тип раздела
         user: Автор
 
       page_field:
         name: Наименование
         value: Значение
-        ftype: Тип
+        type: Тип
         
       setting:
         name: Наименование

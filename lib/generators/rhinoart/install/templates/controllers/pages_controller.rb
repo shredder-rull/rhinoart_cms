@@ -1,27 +1,35 @@
 class PagesController < ApplicationController
-    def index
-        if params[:url] == 'index'
-            render :template => 'shared/not_found', :status => 404
-            return
-        end
 
-        if !@page = Rhinoart::Page.find_by_path('index')
-            render :template => 'shared/not_found', :status => 404
-        end          
-    end 
+  def index
+    @page = Rhinoart::Page.index
+    render template
+  end
 
-    def internal
-        if params[:url] == 'index'
-            render :template => 'shared/not_found', :status => 404
-            return
-        end
-
-        if !@page = Rhinoart::Page.find_by_path(params[:url])
-            render :template => 'shared/not_found', :status => 404
-            return
-        end    
-
-        redirect_to @page.field('redirect_to'), status: :moved_permanently if @page.field('redirect_to').present?    
+  def internal
+    @page = Rhinoart::Page.find(params[:id])
+    if (action = @page.field('action')).present? and respond_to?(action)
+      return send(action.to_sym)
     end
+    redirect_to @page.field('redirect_to') if @page.field('redirect_to').present?
+    render template
+  end
+
+  def p404
+    render :p404, status: 404
+  end
+
+  def p422
+    render :p422, status: 422
+  end
+
+  def p500
+    render :p500, status: 500
+  end
+
+  private
+
+  def template
+    @page.field('template').presence || :default
+  end
 
 end
