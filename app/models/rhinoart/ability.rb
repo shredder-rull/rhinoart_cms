@@ -15,6 +15,7 @@ module Rhinoart
 
       if user.has_role?(Role::USER_MANAGER)
         can :manage, :users
+        can :manage, Rhinoart.user_class
         #cannot :manage, :user_roles
       end
 
