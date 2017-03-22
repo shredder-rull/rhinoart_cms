@@ -3,7 +3,7 @@ Rhinoart::Engine.routes.draw do
   devise_scope :user do
     get 'sign_in' => 'sessions#new'
     post 'sign_in' => 'sessions#create'
-    get 'sign_out' => 'sessions#destroy'
+    delete 'sign_out' => 'sessions#destroy'
   end
 
   scope "(:locale)", locale: /ru|en/ do
@@ -34,7 +34,6 @@ Rhinoart::Engine.routes.draw do
     resources :page_fields, only: [:new, :create, :destroy], via: :js
 
     resources :settings
-    resources :dashboard
 
     #upload files
     scope :fileworks do

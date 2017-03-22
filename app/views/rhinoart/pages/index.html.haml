@@ -15,8 +15,8 @@
       .row
         - Rhinoart::Menu::ContentMenu.items.each do |item|
           %div{class: "col col-md-#{12/Rhinoart::Menu::ContentMenu.items.count}"}
-            - if can?(:manage, :all)
-              %a.quick-button{href: "#{menu_item_link(item)}"}
+            - if menu_item_allowed?(item)
+              %a.quick-button{href: menu_item_link(item)}
                 %i{class: "fa #{item.icon}"}
                 %p= t item.label
                 %span.notification= item.notification.try(:call)

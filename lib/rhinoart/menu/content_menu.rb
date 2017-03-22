@@ -12,6 +12,7 @@ module Rhinoart
           icon: 'fa-tasks',
           link: proc{ rhinoart.new_page_path },
           label: :_NEW_PAGE,
+          allowed: proc{ can?(:manage, :content) },
           notification: ->{ Rhinoart::Page.count }
         })
 
@@ -19,6 +20,7 @@ module Rhinoart
           icon: 'fa-book',
           link: proc{ rhinoart.new_page_path(type: Rhinoart::Page::TYPE::BLOG) },
           label: :_NEW_BLOG_POST,
+          allowed: proc{ can?(:manage, :content) },
           notification: ->{ Rhinoart::Page.where(type: Rhinoart::Page::TYPE::BLOG).count }
       })
 
@@ -26,6 +28,7 @@ module Rhinoart
           icon: 'fa-group',
           link: proc{ rhinoart.users_path },
           label: :_USERS,
+          allowed: proc{ can?(:manage, :users) },
           notification: ->{ Rhinoart.user_class.count }
         })
 
@@ -33,6 +36,7 @@ module Rhinoart
           icon: 'fa-cogs',
           link: proc{ rhinoart.settings_path },
           label: :_SETTINGS,
+          allowed: proc{ can?(:manage, :all) },
           notification: ->{ Rhinoart::Setting.count }
       })
 

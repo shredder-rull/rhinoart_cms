@@ -18,6 +18,8 @@ module Rhinoart
         #cannot :manage, :user_roles
       end
 
+      can :manage, Rhinoart.user_class, id: user.id
+
       if user.has_role?(Role::CONTENT_MANAGER)
         can :manage, :content
       end

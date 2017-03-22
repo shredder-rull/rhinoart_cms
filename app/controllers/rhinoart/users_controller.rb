@@ -2,8 +2,9 @@ require_dependency "rhinoart/application_controller"
 
 module Rhinoart
 	class UsersController < ApplicationController
-		before_action { authorize! :manage, :users }
+
 		before_action :set_user, only: [:show, :edit, :update, :destroy]
+		load_and_authorize_resource
 
 		def index
 			@search = Rhinoart.user_class.ransack(search_params)
@@ -53,24 +54,12 @@ module Rhinoart
 			new_attributes = user_attributes.to_hash.symbolize_keys
 			new_attributes.delete(:password) if new_attributes[:password].blank?
 
-			# if new_attributes[:approved] && !new_attributes[:email].present?
-			# else
-			#   new_attributes[:admin_roles] = nil if !new_attributes[:admin_roles].present? && can?(:manage, :all)
-			#   begin
-			#   		@users.api_role
-			#   		new_attributes[:api_role] = nil if !new_attributes[:api_role].present? && can?(:manage, :all)
-			#   rescue			  	
-			#   end			  
-			# end 
-
-			
-
 			if @user.update_attributes(new_attributes)
-			  redirect_to (params[:redirect_to] || :users), success: "User created"
+				redirect_back_or (params[:redirect_to] || can?(:manage, :users) ? :users : root_path), success: "User updated"
 			else
 			  render :edit
 			end
-		end  
+		end
 
 		def destroy
 			# if params[:hard_delete]
