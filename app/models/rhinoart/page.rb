@@ -82,7 +82,7 @@ module Rhinoart
     end
 
     def title
-      field(:title) || name
+      field(:title).try(:presence) || name
     end
 
     protected
