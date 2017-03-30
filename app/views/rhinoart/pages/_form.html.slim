@@ -24,6 +24,7 @@
           = f.text_field :slug, readonly: disabled_page?(f.object), class: 'form-control', placeholder: 'Skip to autogenerate'
           - if f.object.fields.empty?
             = link_to icon('plus-circle'), '#mdFieldAdd', data: {toggle: 'modal'}, class: 'add-field-link'
+
       - build_default_fields(f.object)
       = render 'page_fields', f: f
 
@@ -44,7 +45,11 @@
         = f.label :active, class: 'col-form-label col-sm-3'
         .col-sm-9= f.check_box :active
 
-  br
+      .form-group.row
+        = f.label :menu, 'In menu', class: 'col-form-label col-sm-3'
+        .col-sm-9
+          = f.check_box :menu, readonly: disabled_page?(f.object)
+
   .row
     .col-lg-10.col-md-12= render 'content_row', f: f
   .form-group.row

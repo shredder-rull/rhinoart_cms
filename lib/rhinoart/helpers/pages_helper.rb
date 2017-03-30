@@ -2,12 +2,12 @@ module Rhinoart
   module Helpers
 	  module PagesHelper
 
-      def meta_tags(page)
-        render('rhinoart/shared/meta_tags', page: page);
+      def rhinoart_meta_tags(page = nil)
+        render('rhinoart/shared/meta_tags', page: page || @page);
       end
 
       def full_title
-        [(@title || content_for(:title)),  setting_by_name('site_name', 'Rhino Rails CMS')].compact.join(' | ')
+        [(@title || content_for(:title) || @page.try(:title)),  setting_by_name('site_name', 'Rhino Rails CMS')].compact.join(' | ')
       end
 
       def page_title(page)

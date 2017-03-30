@@ -11,8 +11,10 @@
                 /  = icon('remove', class: 'del_tab')
         - else
           li.nav-item.active
-            a.nav-link data-toggle="tab_0" href="#" rel="tab_0"
-              = t('_NO_MAIN_CONTENT')
+            | No content
+            /a.nav-link data-toggle="tab_0" href="#" rel="tab_0"
+            /  = t('_NO_MAIN_CONTENT')
+
         /TODO: develop functional for add content
         /li.nav-item.pull-right
         /  a.nav-link#add_content href="#tab_add"= icon('plus-circle')
